@@ -15,6 +15,12 @@ import extract_price
 import stock_checker
 from format_date import get_formatted_dates
 
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # title_text = "Presale The Stanley X LoveShackFancy Holiday Quencher | 20 OZ - Rosa Beaux Pink"
 
 
@@ -53,10 +59,15 @@ def search(title_text):
         " IF THERE ARE MULTIPLE LINKS YOU BELIEVE ARE POSSIBLE, YOU CAN INCLUDE MULTIPLE BUT ONLY OUTPUT LINKS, NO EXTRA WORDING: "
         + hrefs_string
     )
-    client = OpenAI()
+    client = OpenAI(
+        api_key=os.environ["API_KEY"],
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+    )
+
     
     completion = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gemini-1.5-flash",
+        n=1,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {
@@ -67,12 +78,13 @@ def search(title_text):
     )
 
     response_message = completion.choices[0].message.content  # Use .content to get the message
+    print(response_message)
+    
     # Splitting the content by " \n" and storing it in a list
-    links_list = [link.strip() for link in response_message.split("\n")]
+    links_list = [link.strip() for link in response_message.split("\n") if link != ""]
     print("#############################")
     print("COMPLETED LIST:", links_list)
     print("#############################")
-
     result = []
 
     for link in links_list:

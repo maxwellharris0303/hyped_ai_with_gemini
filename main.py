@@ -108,10 +108,8 @@ for title, image, price in zip(title_list, image_list, price_list):
     for item in comparison_items:
         try:
             # Extract the title of the current item
-            flip_element = item.find_element(By.CLASS_NAME, 's-item__title')
-            flip_text = flip_element.text.strip()
+            flip_text = item.find_element(By.CLASS_NAME, 's-item__title').text.strip()
             # print(flip_text)
-
 
             # Check if the title contains a year (e.g., any four digits)
             contains_year = re.search(r'\b\d{4}\b', flip_text)
